@@ -1,19 +1,8 @@
 import babel from 'rollup-plugin-babel'
-let isDev = process.env.NODE_ENV === 'develop'
+import resolve from 'rollup-plugin-node-resolve'
 
-let babelConfig = {
-  presets: [
-    [
-      'env',
-      {
-        modules: false,
-        targets: {
-          browsers: ['chrome > 40', 'safari >= 7']
-        }
-      }
-    ]
-  ]
-}
+import commonjs from 'rollup-plugin-commonjs'
+let isDev = process.env.NODE_ENV === 'develop'
 
 export default {
   input: 'index.js',
@@ -28,10 +17,11 @@ export default {
   },
   plugins: [
     babel({
-      babelrc: false,
-      presets: babelConfig.presets,
-      plugins: babelConfig.plugins,
-      exclude: 'node_modules/**' // only transpile our source code
-    })
+      runtimeHelpers: true,
+      exclude: 'node_modules/**', // only transpile our source code
+      presets: ['@babel/preset-env']
+    }),
+    resolve(),
+    commonjs()
   ]
 }

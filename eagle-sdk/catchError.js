@@ -44,19 +44,24 @@ let formatError = errObj => {
 
 let frameError = async errObj => {
   const result = await $.get(`http://localhost:3000/sourcemap?col=${errObj.col}&row=${errObj.row}`)
-  console.log(result)
-  return errObj
+  return result
 }
 
 let errorCatch = {
   init: cb => {
     let _originOnerror = window.onerror
-    window.onerror = (...arg) => {
+    window.onerror = async (...arg) => {
       let [errorMessage, scriptURI, lineNumber, columnNumber, errorObj] = arg
       let errorInfo = formatError(errorObj)
       // 如果是使用webpack打包的框架代码报错，在处理一次，这里暂时使用resourceUrl字段进行区分是否是框架代码报错
       if (errorInfo.resourceUrl === 'http://localhost:3000/react-app/dist/main.bundle.js') {
-        errorInfo = frameError(errorInfo)
+        let frameResult = await frameError(errorInfo)
+
+        errorInfo.col = frameResult.column
+        errorInfo.row = frameResult.line
+        errorInfo.name = frameResult.name
+        errorInfo.source = frameResult.source
+        errorInfo.sourcesContentMap = frameResult.sourcesContentMap
       }
 
       errorInfo._errorMessage = errorMessage
