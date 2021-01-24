@@ -83,6 +83,26 @@ let errorCatch = {
       })
       _originOnunhandledrejection && _originOnunhandledrejection.apply(window, arg)
     }
+
+    // 资源加载错误， 但不是js抛出的错误，
+    window.addEventListener(
+      'error',
+      event => {
+        // 过滤js error
+        let target = event.target || event.srcElement
+        let isElementTarget =
+          target instanceof HTMLScriptElement ||
+          target instanceof HTMLLinkElement ||
+          target instanceof HTMLImageElement
+        if (!isElementTarget) return false
+        // 上报资源地址
+        let url = target.src || target.href
+        cb({
+          url
+        })
+      },
+      true
+    )
   }
 }
 

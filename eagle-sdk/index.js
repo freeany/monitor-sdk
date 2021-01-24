@@ -4,22 +4,24 @@ import resource from './resource'
 import xhrHook from './xhrHook'
 import catchError from './catchError'
 
-// perf.init(() => {
-//   console.log('perf监测启动')
-// })
+perf.init(data => {
+  console.log('perf监测启动')
+  console.log(data)
+})
 
-// resource.init(resourceData => {
-//   console.log('resource监测启动')
-//   console.log(resourceData)
-// })
+resource.init(resourceData => {
+  console.log('resource监测启动')
+  console.log(resourceData)
+})
 
-// xhrHook.init(data => {
-//   console.log(data)
-// })
+xhrHook.init(data => {
+  console.log('接口性能监控')
+  console.log(data)
+})
 
 catchError.init(data => {
+  console.log('错误监控')
   console.log(data)
-  console.log('catchError is start')
 })
 
 console.log('hello world 123')

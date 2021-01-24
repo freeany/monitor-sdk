@@ -11,7 +11,7 @@ export default {
         let data = {
           // 网络建联
           prevPage: p.fetchStart - p.navigationStart, // 上一个页面的卸载时间
-          redirect: p.redirectEnd - p.redirectStart, // 重定向时间
+          redirect: p.redirectEnd - p.redirectStart, // 重定向时间， 两个网页非同域则为0
           dns: p.domainLookupEnd - p.domainLookupStart, // DNS查找时间
           connect: p.connectEnd - p.connectStart, // TCP建联时间
           network: p.connectEnd - p.navigationStart, // 网络总耗时， 前面的加起来
@@ -28,7 +28,7 @@ export default {
 
           // 关键阶段
           load: p.loadEventEnd - p.navigationStart, // 页面完全加载时间
-          domReady: p.domContentLoadedEventStart - p.navigationStart, // dom准备时间
+          domReady: p.domContentLoadedEventStart - p.navigationStart, // dom准备时间， 白屏时间
           interactive: p.domInteractive - p.navigationStart, // 可操作时间，用户的点击可以被响应了
           ttfb: p.responseStart - p.navigationStart // 首字节时间
         }
@@ -36,6 +36,7 @@ export default {
       },
       // dom解析完成, DOMContentLoaded事件触发， 如果没有这个则要在load事件中加上settimeout
       // 在正常环境下  loadEvent  frontend  load一般来说是负值， 但是在小网页中，load事件发生的太快了，导致loadEvent有值，所以是正值的情况， 在onload之前运行
+      // 有可能没有触发onload时间，比如打开tabao.com，上面会一直转圈圈，如果还在转圈圈的过程中用户关闭了，那么此时还没有触发onload事件，此时性能监控中的值就没有数据了，所以写了这么一个domReady方法。
       domReady: callback => {
         if (isDOMReady) return
         let timer = null

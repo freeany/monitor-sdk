@@ -20,7 +20,6 @@ let xhrHook = {
 
     let _originSend = xhr.prototype.send
     xhr.prototype.send = function (value) {
-      console.log('a')
       let _self = this
       this._eagle_start_time = Date.now()
 
